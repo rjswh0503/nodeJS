@@ -2,6 +2,11 @@ const express = require('express') // express 라이브러리를 사용하기 �
 const app = express()
 
 
+// server.js에서 css파일을 사용하기 위한 코드
+// .css .js .jpg 파일들은 static파일 이라고 한다. 
+app.use(express.static(__dirname + '/public'))
+
+
 
 app.listen(8080, () => {
     console.log('http://localhost:8080 에서 서버 실행중');
@@ -29,4 +34,5 @@ app.get('/', (요청,응답) => {
     // __dirname은 절대경로 server.js가 담긴 폴더를 의미하는 것
     // /index.html 파일과 server.js 파일이 같은 폴더에 있기 때문에 index.html파일을 보내줄 수 있다.
 })
+
 
