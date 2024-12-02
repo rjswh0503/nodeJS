@@ -1,4 +1,4 @@
-const express = require('express') // express 라이브러리를 사용하기 위해 
+const express = require('express') // express 라이브러리를 사용하기 위한 변수
 const app = express()
 
 
@@ -11,3 +11,8 @@ app.listen(8080, () => {
 app.get('/', (요청,응답) => { // 메인페이지 접속시 반갑다가 보임;
     응답.send('반갑다');
 })
+
+app.get('/news', (요청,응답) => {
+    응답.send('오늘의 뉴스!');
+})
+
