@@ -27,4 +27,5 @@ app.get('/list', async(요청,응답) => {
    let result = await db.collection('post').find().toArray()
    console.log(result[0]);
    응답.send(result[0]);
-})
+});
+

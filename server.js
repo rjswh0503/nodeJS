@@ -1,5 +1,8 @@
 const express = require('express') // express 라이브러리를 사용하기 위한 변수
 const app = express()
+// html 파일에 데이터를 넣고 싶으면 .ejs 파일로 만들면 가능.
+
+app.set('view engine', 'ejs')
 
 
 //mongodb 라이브러리 사용하기 위한 코드
@@ -66,5 +69,26 @@ app.get('/list',  async (요청,응답) => {
   // await 
   let result = await db.collection('post').find().toArray()
   console.log(result[0].title);
-  응답.send(result[0].title)
+  응답.render('list.ejs',{posts : result});
+})
+
+
+
+ // html 파일에 서버 데이터를 넣는 방법은 template engine을 사용하면 된다.
+ // template engine인 ejs를 사용하면 html파일에 서버 데이터를 넣을 수 있다.
+ // ejs 파일은 views폴더안에 만든다.
+ // 유저에게 보낼 때 응답.send가 아닌 응답.render를 사용하여 데이터를 유저에게 보낼 수 있다.
+ // 예제 코드 
+              // list.ejs는 ejs파일명 ejs파일은 views폴더에 넣어 관리한다.
+              //             posts는 html에서 보여줄 데이터명이다.
+              //                    result는 서버 데이터들이 들어있는 변수이다.
+ // 응답.render('list.ejs", {posts : result})
+// html에서  <%= posts %>를 사용하여 데이터를 가져올 수 있다.
+
+
+let now = new Date();
+
+// 오늘 숙제
+app.get('/time', (요청,응답) => {
+  응답.render('time.ejs', {지금시간:now});
 })
