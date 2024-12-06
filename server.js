@@ -54,3 +54,17 @@ app.get('/news', (요청,응답) => { // 누군가 /news로 접속하면 오늘�
 })
  
 
+
+
+// 2024-12-06 
+
+// db.collection('post').find().toArray()
+// await 문법을 사용하기 위해 (요청,응답) 앞에 aysnc를 붙여야 사용할 수 있음 
+app.get('/list',  async (요청,응답) => {
+  //result 변수에  await db.collection('post').find().toArray() 저장
+  // MongoDB에 있는 데이터들을 불러올 때  post 라는 collection 뒤에 .find().toArray()를 사용하여 불러올 수 있다.
+  // await 
+  let result = await db.collection('post').find().toArray()
+  console.log(result[0].title);
+  응답.send(result[0].title)
+})
