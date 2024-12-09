@@ -3,6 +3,9 @@ const app = express()
 // html 파일에 데이터를 넣고 싶으면 .ejs 파일로 만들면 가능.
 
 app.set('view engine', 'ejs')
+// 요청.body 사용할려면 필수
+app.use(express.json());
+app.use(express.urlencoded({extended:true}))
 
 
 //mongodb 라이브러리 사용하기 위한 코드
@@ -92,3 +95,87 @@ let now = new Date();
 app.get('/time', (요청,응답) => {
   응답.render('time.ejs', {지금시간:now});
 })
+
+
+
+/* 2024-12-09 
+
+1.method종류 : GET, POST, PUT, UPDATE, DELETE
+Get : 서버에 데이터를 요청할 때
+post : 서버에 데이터 입력요청할 때
+put : 서버에 데이터 수정을 요청할 때
+delete : 서버에 데이터를 삭제 요청할 때
+
+
+2.url : /list 여기서 url은 EndPoint라고도 한다.
+
+
+3. REST API
+  
+
+
+
+*/
+
+
+/* 
+      2024-12-09 chapter1
+
+      <%는  html 사이에 자바스크립트 문법을 쓸 때 사용한다 %>
+      예제 
+      <div class="white-bg">
+         <% for(let i = 0; i < posts.length; i++){ %>
+
+          여기서 for(let i = 0; i < posts.length; i++) 자바스크립트 문법이기 때문에
+          문법이 시작하는 for() 앞에 <% 사용하고 문법이 끝나는 곳 { 뒤에 %>를 해주면 
+          html 파일에서 자바스크립트 문법을 사용할 수 있다.
+          
+          JSP랑 비슷하다고 보면 된다.
+
+          <div class="list-box">
+            <h4><%= posts[i].title %></h4>
+            <p><%= posts[i].contents %></p>
+          </div>
+         <% } %>
+        </div> 
+
+
+        <%- :  include같은 문법을  쓸 때 사용한다. %>
+    
+      */
+
+/*2024-12-09 chapter02
+
+
+
+
+*/
+
+app.get('/write', (요청,응답)=> {
+  응답.render('write.ejs');
+
+})
+
+
+app.post('/add', async (요청,응답) => {
+  
+
+  // 에러상황을 처리하고 싶을 땐 try catch를 사용하면 된다.
+  try{
+
+    if(요청.body.title == ''){
+      응답.send('제목 입력해라~')
+    }else if(요청.body.content == ''){
+      응답.send('내용 입력 안했는데?')
+    }else{
+      // 데이터베이스에 요청한 값을 저장하기 위해서는 insertOne을 사용하면 된다.
+      await db.collection('post').insertOne({title : 요청.body.title, contents : 요청.body.content})
+      응답.redirect('/list');
+    }
+  } catch(e){
+    console.log(e);
+    응답.status(500).send('서버에러');
+  }
+})
+
+

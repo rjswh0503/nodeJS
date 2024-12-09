@@ -23,9 +23,25 @@ new MongoClient(url).connect().then((client) => {
 
 
 // mongoDB에 저장된 데이터를 불러오기 위한 코드 작성
+// app.get server API
 app.get('/list', async(요청,응답) => {
    let result = await db.collection('post').find().toArray()
    console.log(result[0]);
    응답.send(result[0]);
 });
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+*/ 
