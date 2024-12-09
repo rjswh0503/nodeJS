@@ -31,16 +31,20 @@ app.get('/', (요청,응답) => {
 })
 
 app.post('/add', async(요청,응답) => {
-   await db.collection('user').insertOne({
-        name : 요청.body.name,
-        email : 요청.body.email,
-        password1 : 요청.body.password1,
-        password2 : 요청.body.password2,
-        address : 요청.body.address,
-        man : 요청.body.man,
-        girl : 요청.body.girl
-    })
-    응답.redirect('/userList');
+    try{
+        await db.collection('user').insertOne({
+            name : 요청.body.name,
+            email : 요청.body.email,
+            password1 : 요청.body.password1,
+            password2 : 요청.body.password2,
+            address : 요청.body.address,
+            gender : 요청.body.gender,
+        })
+        응답.redirect('/userList');
+    } catch(e){
+        console.log(e);
+    }
+   
 })
 
 
