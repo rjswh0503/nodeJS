@@ -9,7 +9,8 @@ app.use(express.urlencoded({extended:true}))
 
 
 //mongodb 라이브러리 사용하기 위한 코드
-const { MongoClient } = require('mongodb')
+// ObjectId함수를 사용하기 위해선 ObjectId를 추가
+const { MongoClient, ObjectId } = require('mongodb')
 
 let db
 const url ='mongodb+srv://shin:153123@cluster0.ydxf4.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
@@ -178,4 +179,20 @@ app.post('/add', async (요청,응답) => {
   }
 })
 
+
+// 2024-12-11 
+// 상세페이지 만들기
+
+
+// url파라미터 문법을 사용하면 비슷한 /url을 가진 api 여러개 만들 필요 없음.
+
+//        url파라미터를 사용하기 위해선 url/에 : 을 넣어주고 :뒤에 아무 글을 작성하면 된다.
+//          ex) detail/:id
+//          만약에 상품 id를 
+// 컬렉션에서 하나의 게시물만 불러오고 싶을 경우 findOne 함수를 사용해 불러올 수 있다.
+// 이때 ObjectId를 사용하여 불러오는데 ObjectId를 사용하기 위해선 앞에 new를 적어야 가능하다.
+app.get('/detail/:id', async (요청,응답)=> {
+  let result = await db.collection('post').findOne({ _id : new ObjectId(요청.params.id)} )
+  응답.render('detail.ejs', {detail:result})
+})
 
