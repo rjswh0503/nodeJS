@@ -188,7 +188,7 @@ app.get('/post/:id', async(요청,응답) => {
 // 수정 api
 app.post('/edit', async(요청,응답) => {
   try{
-  await db.collection('post').updateOne({_id: new ObjectId(요청.params.id)}, {$set : {title : 요청.body.title, contents : 요청.body.contents, }})
+  await db.collection('post').updateOne({_id: new ObjectId(요청.body.id)}, {$set : {title : 요청.body.title, contents : 요청.body.contents, }})
     응답.redirect('/list');
   }catch(e) {
     console.log(e);
