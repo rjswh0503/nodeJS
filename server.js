@@ -186,12 +186,21 @@ app.get('/post/:id', async(요청,응답) => {
 })
 
 // 수정 api
+
+//수정기능을 만들기 위해서 updateOne을 사용하면 된다.
+// ex) db.collection('post').updateOne({_id: new ObjectId(요청.body.id)}, {$set : {title : 요청.body.title, contents : 요청.body.contents, }})
+// 제목과 내용을 수정해야 하기 때문에 데이터베이스에 있는 title,content를 요청.body를 사용하여 데이터베이스로부터 데이터를 가져와야 함
 app.post('/edit', async(요청,응답) => {
   try{
-  await db.collection('post').updateOne({_id: new ObjectId(요청.body.id)}, {$set : {title : 요청.body.title, contents : 요청.body.contents, }})
+  
+    if(요청.body.title == ''|| 요청.body.contents == ''){
+      응답.send('제목이나 내용에 빈칸이 있으면 안됩니다.')
+    }else{
+      await db.collection('post').updateOne({_id: new ObjectId(요청.body.id)}, {$set : {title : 요청.body.title, contents : 요청.body.contents, }})
     응답.redirect('/list');
+    }
   }catch(e) {
-    console.log(e);
+    
     응답.status(500).send("서버에러");
   }
   
