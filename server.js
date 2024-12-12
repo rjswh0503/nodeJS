@@ -61,9 +61,8 @@ app.get("/list", async (요청, 응답) => {
   //result 변수에  await db.collection('post').find().toArray() 저장
   // MongoDB에 있는 데이터들을 불러올 때  post 라는 collection 뒤에 .find().toArray()를 사용하여 불러올 수 있다.
   // await
-  let result = await db.collection("post").find().toArray();
-  console.log(result[0].title);
-  응답.render("list.ejs", { posts: result });
+  let result1 = await db.collection("post").find().toArray();
+  응답.render("list.ejs", { posts: result1 });
 });
 
 // html 파일에 서버 데이터를 넣는 방법은 template engine을 사용하면 된다.
