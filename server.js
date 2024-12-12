@@ -176,3 +176,23 @@ app.get("/detail/:id", async (요청, 응답) => {
   console.log(요청.params.id);
   응답.render("detail.ejs", { detail: result });
 });
+
+
+// 2024.12.12  수정기능 만들기
+
+app.get('/post/:id', async(요청,응답) => {
+  let result = await db.collection('post').findOne({_id: new ObjectId(요청.params.id)})
+  응답.render('edit.ejs', {edit : result})
+})
+
+// 수정 api
+app.post('/edit', async(요청,응답) => {
+  try{
+  await db.collection('post').updateOne({_id: new ObjectId(요청.params.id)}, {$set : {title : 요청.body.title, contents : 요청.body.contents, }})
+    응답.redirect('/list');
+  }catch(e) {
+    console.log(e);
+    응답.status(500).send("서버에러");
+  }
+  
+})
