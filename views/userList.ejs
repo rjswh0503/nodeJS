@@ -11,7 +11,9 @@
             <% for(let i = 0; i < users.length; i++) { %>
           <div class="list-box">
            
-            <h4>이름:<%= users[i].name %> </h4>
+            <h4><a href="/detail/<%= users[i]._id %>">이름:<%= users[i].name %> </a>
+              <a href="/profile/<%= users[i]._id %>">✏️</a>
+            </h4>
             <p>이메일:<%= users[i].email %> </p>
           </div>
           <% } %>
