@@ -224,9 +224,10 @@ app.put('/edit', async(요청,응답) => {
 // 2024-12-13 삭제기능 
 
 app.delete('/delete', async (요청,응답) => {
-  let result = await db.collection('post').deleteOne({_id: new ObjectId(요청.body.id)})
+  await db.collection('post').deleteOne({_id: new ObjectId(요청.query.docid)})
   응답.send('삭제완료!');
 })
+
 
 
 
