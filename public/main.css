@@ -51,3 +51,11 @@ div {
   padding: 15px;
   margin-top: 10px;
 }
+
+
+
+.write-1 {
+  display: flex;
+  justify-content: flex-end;
+  
+}
