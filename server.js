@@ -229,6 +229,13 @@ app.delete('/delete', async (요청,응답) => {
 })
 
 
+// pagination 
+
+app.get('/list/:id', async (요청,응답) => {
+  let result = await db.collection('post').find().skip((요청.params.id -1) * 5).limit(5).toArray()
+  응답.render('list.ejs', {posts : result})
+})
+
 
 
 
