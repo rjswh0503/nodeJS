@@ -14,6 +14,41 @@
       <p>주소: <%= detail.address %></p>
       <p>성별: <%= detail.gender %></p><br>
       <p><a href="/userList">뒤로 돌아가기</a></p>
+      <a href="/userList"><span class="delete" data-id="<%= detail._id%>" >회원탈퇴</span></a>
     </div>
+
+
+
+      <script>
+        document.querySelector('.delete').addEventListener('click', function(e){
+          try{
+            fetch('/delete?docid=' + e.target.dataset.id, {
+            method: 'DELETE',
+          })
+          alert('삭제완료');
+          
+
+          } catch(e){
+            console.log(e);
+          }
+          
+
+
+
+
+
+        })
+
+        
+        
+
+
+
+      </script>
+
+
+
+
+
   </body>
 </html>

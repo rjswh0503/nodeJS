@@ -90,3 +90,18 @@ app.post('/edit', async(요청,응답) => {
      
 })
 
+
+
+// DB에 저장된 데이터 삭제 복습
+
+
+app.delete('/delete', async(요청,응답) => {
+    try{
+        await db.collection('user').deleteOne({ _id : new ObjectId(요청.query.docid)})
+        응답.send('삭제완료!')
+    }catch(e){
+        console.log(e)
+    }
+   
+})
+

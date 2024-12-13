@@ -59,3 +59,9 @@ div {
   justify-content: flex-end;
   
 }
+
+
+
+.delete {
+  cursor: pointer;
+}
