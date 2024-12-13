@@ -15,10 +15,21 @@
         <h4>
           <a href="/detail/<%= posts[i]._id %>"> <%= posts[i].title %> </a>
           <a href="/post/<%= posts[i]._id %>">✏️</a>
+          <span class="delete">🗑️</span>
         </h4>
         <p><%= posts[i].contents %></p>
       </div>
       <% } %>
     </div>
+
+    <script>
+      document.querySelectorAll('.delete')[1]
+      .addEventListener('click', function(){
+        fetch('/delete?docid=' + '<%= posts[1]._id%>', {
+          method : 'DELETE',
+         
+        })
+      })
+    </script>
   </body>
 </html>

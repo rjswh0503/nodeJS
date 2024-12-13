@@ -1,15 +1,24 @@
 const express = require("express"); // express 라이브러리를 사용하기 위한 변수
 const app = express();
-// html 파일에 데이터를 넣고 싶으면 .ejs 파일로 만들면 가능.
 
+//mongodb 라이브러리 사용하기 위한 코드
+// ObjectId함수를 사용하기 위해선 ObjectId를 추가
+const { MongoClient, ObjectId } = require("mongodb");
+
+//methodOverride라이브러리를 사용하기 위한 코드 작성
+const methodOverride = require('method-override')
+
+
+
+// html 파일에 데이터를 넣고 싶으면 .ejs 파일로 만들면 가능.
 app.set("view engine", "ejs");
 // 요청.body 사용할려면 필수
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-//mongodb 라이브러리 사용하기 위한 코드
-// ObjectId함수를 사용하기 위해선 ObjectId를 추가
-const { MongoClient, ObjectId } = require("mongodb");
+app.use(methodOverride('_method'));
+
+
 
 let db;
 const url =
@@ -190,7 +199,12 @@ app.get('/post/:id', async(요청,응답) => {
 //수정기능을 만들기 위해서 updateOne을 사용하면 된다.
 // ex) db.collection('post').updateOne({_id: new ObjectId(요청.body.id)}, {$set : {title : 요청.body.title, contents : 요청.body.contents, }})
 // 제목과 내용을 수정해야 하기 때문에 데이터베이스에 있는 title,content를 요청.body를 사용하여 데이터베이스로부터 데이터를 가져와야 함
-app.post('/edit', async(요청,응답) => {
+
+
+//원래 form태그에는 GET,POST 메서드만 사용 가능하지만 
+// method-override라이브러리를 사용하면 form태그에 PUT,DELETE 메서드를 사용할 수 있음
+// 사용예제 : action="/edit?_method=PUT" method="POST"
+app.put('/edit', async(요청,응답) => {
   try{
   
     if(요청.body.title == ''|| 요청.body.contents == ''){
@@ -205,3 +219,15 @@ app.post('/edit', async(요청,응답) => {
   }
   
 })
+
+
+// 2024-12-13 삭제기능 
+
+app.delete('/delete', async (요청,응답) => {
+  let result = await db.collection('post').deleteOne({_id: new ObjectId(요청.body.id)})
+  응답.send('삭제완료!');
+})
+
+
+
+
