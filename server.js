@@ -9,6 +9,14 @@ const { MongoClient, ObjectId } = require("mongodb");
 const methodOverride = require('method-override')
 
 
+//비밀번호 해싱 bcrypt
+const bcrypt = require('bcrypt');
+
+
+//로그인 한 세션을 DB에 저장하기 위한 라이브러리
+const MongoStore = require('connect-mongo')
+
+
 
 // html 파일에 데이터를 넣고 싶으면 .ejs 파일로 만들면 가능.
 app.set("view engine", "ejs");
@@ -32,7 +40,13 @@ app.use(session({
   //secret은 세션의 id는 암호화해서 유저에게 보내기 때문에 secret이 털리면 개인정보가 다 날라간다.
   resave : false,
   // 유저가 서버로 요청할 때 마다 세션을 갱신할 것인지  보통은 false로 한다.
-  saveUninitialized : false
+  saveUninitialized : false,
+  cookie : { maxAge : 60 * 60 * 1000 }, // 1시간이 지나면 자동으로 세션종료 해준다.
+  store : MongoStore.create({
+    mongoUrl : 'mongodb+srv://shin:153123@cluster0.ydxf4.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0',
+    dbName : 'forum'
+  })
+   
 }))
 
 app.use(passport.session()) 
@@ -260,7 +274,7 @@ app.get('/list/:id', async (요청,응답) => {
 
 
 // 2024-12-16 
-//  회원가입 기능
+//  세션
 /*
 npm install express-session passport passport-local 
 에서 express-session은 세션을 만들 수 있게 도와주는 라이브러리 
@@ -275,7 +289,8 @@ passport.use(new LocalStrategy(async (입력한아이디, 입력한비번, cb) =
   if (!result) {
     return cb(null, false, { message: '아이디 DB에 없음' })
   }
-  if (result.password == 입력한비번) {
+  
+  if (await bcrypt.compare(입력한비번, result.password)) {
     return cb(null, result)
   } else {
     return cb(null, false, { message: '비번불일치' });
@@ -290,19 +305,37 @@ passport.use(new LocalStrategy(async (입력한아이디, 입력한비번, cb) =
 // 로그인 세션
 /*
 요청.logIn(user, (err)=> { 을 실행할 때마다 같이 실행된다.
+
+if (result.password == 입력한비번) {
+    return cb(null, result)
+  } else {
+    return cb(null, false, { message: '비번불일치' });
+  }
+
+  이 부분에 있는 result가     user 파라미터로 이동해서 유저 정보를 가져올 수 있음
+  passport.serializeUser((user, done) => {
+  
+
 */
 passport.serializeUser((user, done) => {
+  process.nextTick(() => { // 내부 코드를 비동기적으로 처리해줌
+    done(null,{ id: user._id, username : user.username })
+  })
+})
+
+// passport.deserializeUser()는 쿠키를 분석하는 코드
+passport.deserializeUser(async (user, done) => {
+  
+ let result = await db.collection('user').findOne({_id: new ObjectId(user.id)})
+ delete result.password
   process.nextTick(() => {
-    done(null, )
+    done(null, result)
   })
 })
 
 
 
-
-
 app.get('/login', (요청,응답) => {
-  
   응답.render('login.ejs');
 })
 
@@ -324,3 +357,46 @@ app.post('/login', (요청,응답,next) => {
 
 
 
+
+/* 
+
+1. 로그인 성공하면 세션 만들고 쿠키를 유저에게 보내기
+(passport.serializeUser()를 사용하면 자동임)
+2. 유저가 쿠키 제출시 확인 
+(passport.deserializeUser()를 사용하면 자동)
+*/
+
+
+// 가입기능 만들기
+
+// /register 라우터로 get요청시 register.ejs을 보여주기
+app.get('/register', (요청,응답) => {
+  응답.render('register.ejs')
+})
+
+
+// app.post로 회원가입 한 아이디 비밀번호를 디비에 저장
+// hashing 알고리즘
+app.post('/register', async (요청,응답) => {
+
+  let 해싱 = await bcrypt.hash(요청.body.password, 10)
+  let result = await db.collection('user').findOne({ username : 요청.body.username})
+  try{
+    if(요청.body.username == '' || 요청.body.password == ''){
+      응답.send('아이디 혹은 비밀번호가 공백입니다. 입력해주세요.!!')
+    }else if(result){
+      응답.send('아이디가 이미 있습니다. 중복은 불가능합니다.');
+    }else if(요청.body.password.length < 6){
+      응답.send('비밀번호는 6글자 이상입니다.')
+    }else {
+      await db.collection('user').insertOne({username : 요청.body.username, password : 해싱})
+      응답.redirect('/list')
+      
+    }
+     
+  }catch(e){
+    console.log(e)
+  }
+  
+})
+ 
