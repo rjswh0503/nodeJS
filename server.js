@@ -20,6 +20,27 @@ app.use(methodOverride('_method'));
 
 
 
+// passport 라이브러리를 사용할 때 필요한 코드
+const session = require('express-session')
+const passport = require('passport')
+const LocalStrategy = require('passport-local')
+
+//순서 잘 지켜야 됨
+app.use(passport.initialize())
+app.use(session({
+  secret: '암호화에 쓸 비번',
+  //secret은 세션의 id는 암호화해서 유저에게 보내기 때문에 secret이 털리면 개인정보가 다 날라간다.
+  resave : false,
+  // 유저가 서버로 요청할 때 마다 세션을 갱신할 것인지  보통은 false로 한다.
+  saveUninitialized : false
+}))
+
+app.use(passport.session()) 
+
+
+
+
+
 let db;
 const url =
   "mongodb+srv://shin:153123@cluster0.ydxf4.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
@@ -235,6 +256,70 @@ app.get('/list/:id', async (요청,응답) => {
   let result = await db.collection('post').find().skip((요청.params.id -1) * 5).limit(5).toArray()
   응답.render('list.ejs', {posts : result})
 })
+
+
+
+// 2024-12-16 
+//  회원가입 기능
+/*
+npm install express-session passport passport-local 
+에서 express-session은 세션을 만들 수 있게 도와주는 라이브러리 
+passport는 회원인증을 도와주는 라이브러리 
+passport-local은 아이디 비밀번호 방식을 이용한 회원인증할 때 쓰는 라이브러리
+
+*/
+
+passport.use(new LocalStrategy(async (입력한아이디, 입력한비번, cb) => {
+  try{
+    let result = await db.collection('user').findOne({ username : 입력한아이디})
+  if (!result) {
+    return cb(null, false, { message: '아이디 DB에 없음' })
+  }
+  if (result.password == 입력한비번) {
+    return cb(null, result)
+  } else {
+    return cb(null, false, { message: '비번불일치' });
+  }
+  }catch(e){
+    console.l('에러~', e);
+  }
+}))
+
+
+
+// 로그인 세션
+/*
+요청.logIn(user, (err)=> { 을 실행할 때마다 같이 실행된다.
+*/
+passport.serializeUser((user, done) => {
+  process.nextTick(() => {
+    done(null, )
+  })
+})
+
+
+
+
+
+app.get('/login', (요청,응답) => {
+  
+  응답.render('login.ejs');
+})
+
+app.post('/login', (요청,응답,next) => {
+  
+  passport.authenticate('local', (error, user,info) => {
+    if(error)return 응답.status(500).json(error)
+      if(!user) return 응답.status(500).json(info.message)
+        요청.logIn(user, (err)=> {
+          if(err) return next(err)
+            응답.redirect('/list')
+        })
+
+  })(요청,응답, next)
+  
+})
+
 
 
 
