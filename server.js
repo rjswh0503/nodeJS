@@ -340,7 +340,7 @@ app.get('/login', (요청,응답) => {
 })
 
 app.post('/login', (요청,응답,next) => {
-  
+  console.log(요청.user)
   passport.authenticate('local', (error, user,info) => {
     if(error)return 응답.status(500).json(error)
       if(!user) return 응답.status(500).json(info.message)
@@ -399,4 +399,6 @@ app.post('/register', async (요청,응답) => {
   }
   
 })
+
+
  
