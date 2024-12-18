@@ -419,10 +419,24 @@ app.post('/register', idPasswordCheck, async (요청,응답) => {
 
 /* 
 환경변수는 별도 파일에 보관하는게 좋다.
+환경변수를 보관하는 파일은 .env 
 
+보관 방법은 
 
+변수명 = 넣어줄 중요한 변수 
+ex) PORT = 8081 
+이렇게 작성해주고 포트번호 가 들어갈 자리에 PORT라는 변수명을 넣어주면 된다. 
+가변적인 변수에 사용
+env는 github에 올리면 안됨.
 */
 
+
+// 미들웨어
+// app.post('/register', idPasswordCheck, async (요청,응답) => {
+// 이런식으로 /register를 요청할 때  idPasswordCheck 미들웨어를 /register와 async (요청,응답) 사이에 넣어주면 
+// /register post 요청 후 idPasswordCheck 미들웨어가 실행 된 후   async (요청,응답) => { 이 사이에 있는 코드가 실행이 된다.}
+// 미들웨어는 3개의 인자 값을 가진다. 요청,응답,next 
+// 미들웨어가 끝난 후 next()를 작성하지 않으면 반복실행?이 된다..
 function idPasswordCheck (요청,응답,next) {
   if(요청.body.username == '' || 요청.body.password == ''){
     응답.send('공백은 안됨.');
@@ -432,3 +446,5 @@ function idPasswordCheck (요청,응답,next) {
 }
 
  
+
+// 이미지 업로드 기능 만들기 1 (AWS S3)
