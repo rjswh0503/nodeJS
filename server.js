@@ -9,12 +9,15 @@ const { MongoClient, ObjectId } = require("mongodb");
 const methodOverride = require('method-override')
 
 
-//비밀번호 해싱 bcrypt
+// 비밀번호 해싱 bcrypt
 const bcrypt = require('bcrypt');
 
 
-//로그인 한 세션을 DB에 저장하기 위한 라이브러리
+// 로그인 한 세션을 DB에 저장하기 위한 라이브러리
 const MongoStore = require('connect-mongo')
+
+// 환경변수를 다른파일에 보관하기 위한 코드
+require('dotenv').config()
 
 
 
@@ -43,7 +46,7 @@ app.use(session({
   saveUninitialized : false,
   cookie : { maxAge : 60 * 60 * 1000 }, // 1시간이 지나면 자동으로 세션종료 해준다.
   store : MongoStore.create({
-    mongoUrl : 'mongodb+srv://shin:153123@cluster0.ydxf4.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0',
+    mongoUrl : process.env.DB_URL,
     dbName : 'forum'
   })
    
@@ -52,18 +55,28 @@ app.use(session({
 app.use(passport.session()) 
 
 
+// /list로 api요청시 현재 시간을 터미널에 출력하기
+app.use('/list', (요청,응답,next) => {
+  console.log(new Date());
+  next();
+})
+
+
+
+
+
+
 
 
 
 let db;
-const url =
-  "mongodb+srv://shin:153123@cluster0.ydxf4.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const url = process.env.DB_URL;
 new MongoClient(url)
   .connect()
   .then((client) => {
     console.log("DB연결성공");
     db = client.db("forum");
-    app.listen(8081, () => {
+    app.listen(process.env.PORT, () => {
       console.log("http://localhost:8081 에서 서버 실행중");
     });
   })
@@ -85,7 +98,11 @@ app.get("/shop", (요청, 응답) => {
 
 //유저에게 html파일을 보내주려면
 app.get("/", (요청, 응답) => {
-  응답.sendFile(__dirname + "/index.html");
+  if(!요청.user){
+    응답.send('로그인 부터 하세요~')
+  }else if(요청.user){
+    응답.sendFile(__dirname + "/index.html");
+  }
   // __dirname은 절대경로 server.js가 담긴 폴더를 의미하는 것
   // /index.html 파일과 server.js 파일이 같은 폴더에 있기 때문에 index.html파일을 보내줄 수 있다.
 });
@@ -339,8 +356,7 @@ app.get('/login', (요청,응답) => {
   응답.render('login.ejs');
 })
 
-app.post('/login', (요청,응답,next) => {
-  console.log(요청.user)
+app.post('/login',idPasswordCheck, (요청,응답,next) => {
   passport.authenticate('local', (error, user,info) => {
     if(error)return 응답.status(500).json(error)
       if(!user) return 응답.status(500).json(info.message)
@@ -370,21 +386,19 @@ app.post('/login', (요청,응답,next) => {
 // 가입기능 만들기
 
 // /register 라우터로 get요청시 register.ejs을 보여주기
-app.get('/register', (요청,응답) => {
+app.get('/register',idPasswordCheck, (요청,응답) => {
   응답.render('register.ejs')
 })
 
 
 // app.post로 회원가입 한 아이디 비밀번호를 디비에 저장
 // hashing 알고리즘
-app.post('/register', async (요청,응답) => {
+app.post('/register', idPasswordCheck, async (요청,응답) => {
 
   let 해싱 = await bcrypt.hash(요청.body.password, 10)
   let result = await db.collection('user').findOne({ username : 요청.body.username})
   try{
-    if(요청.body.username == '' || 요청.body.password == ''){
-      응답.send('아이디 혹은 비밀번호가 공백입니다. 입력해주세요.!!')
-    }else if(result){
+     if(result){
       응답.send('아이디가 이미 있습니다. 중복은 불가능합니다.');
     }else if(요청.body.password.length < 6){
       응답.send('비밀번호는 6글자 이상입니다.')
@@ -400,5 +414,21 @@ app.post('/register', async (요청,응답) => {
   
 })
 
+
+// 2024-12-18 환경변수 / 미들웨어
+
+/* 
+환경변수는 별도 파일에 보관하는게 좋다.
+
+
+*/
+
+function idPasswordCheck (요청,응답,next) {
+  if(요청.body.username == '' || 요청.body.password == ''){
+    응답.send('공백은 안됨.');
+  }else {
+    next()
+  }
+}
 
  
