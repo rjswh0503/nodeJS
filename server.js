@@ -62,7 +62,26 @@ app.use('/list', (요청,응답,next) => {
 })
 
 
+const { S3Client } = require('@aws-sdk/client-s3')
+const multer = require('multer')
+const multerS3 = require('multer-s3')
+const s3 = new S3Client({
+  region : 'ap-northeast-2',
+  credentials : {
+      accessKeyId : process.env.S3_KEy,
+      secretAccessKey : process.env.S3_SECRET
+  }
+})
 
+const upload = multer({
+  storage: multerS3({
+    s3: s3,
+    bucket: 'jaeshinforum1',
+    key: function (요청, file, cb) {
+      cb(null, Date.now().toString()) //업로드시 파일명 변경가능
+    }
+  })
+})
 
 
 
@@ -200,8 +219,9 @@ app.get("/write", (요청, 응답) => {
   응답.render("write.ejs");
 });
 
-app.post("/add", async (요청, 응답) => {
-  // 에러상황을 처리하고 싶을 땐 try catch를 사용하면 된다.
+app.post("/add", upload.single('img'), async (요청, 응답) => {
+  console.log(요청.file)
+    // 에러상황을 처리하고 싶을 땐 try catch를 사용하면 된다.
   try {
     if (요청.body.title == "") {
       응답.send("제목 입력해라~");
