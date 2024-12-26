@@ -476,11 +476,21 @@ function idPasswordCheck (요청,응답,next) {
 // 검색을 좀 더 빠르게 하고 싶으면 index를 사용하면 됨
 // Index 단점은 document 추가/수정/삭제시 index도 반영해야 한다.
 //$text text index를 사용하겠다는 뜻
+// let result = await db.collection('post').find({$text : { $search : 요청.query.val}}).toArray()
 
-//
+//search-index  
 app.get('/search', async(요청,응답) => {
   console.log(요청.query.val)
- let result = await db.collection('post').find({$text : { $search : 요청.query.val}}).toArray()
+    let 검색조건 = [
+      {$search : {
+        index : 'title_index',
+        text : { query : 요청.query.val, path : 'title' }
+      }},
+      { $sort : { _id : 1 } },
+      { $limit : 10 },
+      { $project : { 제목 : 1, _id : 0 } }
+    ] 
+ let result = await db.collection('post').aggregate(검색조건).toArray()
   응답.render('search.ejs', { posts : result })
 })
 
