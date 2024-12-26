@@ -488,7 +488,7 @@ app.get('/search', async(요청,응답) => {
       }},
       { $sort : { _id : 1 } },
       { $limit : 10 },
-      { $project : { 제목 : 1, _id : 0 } }
+      { $project : { _id : 0 } }
     ] 
  let result = await db.collection('post').aggregate(검색조건).toArray()
   응답.render('search.ejs', { posts : result })
