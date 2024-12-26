@@ -473,8 +473,12 @@ function idPasswordCheck (요청,응답,next) {
 // find({title : "요청.query.val"})을 입력하고 게시글을 검색할 때 title : 이  요청한 제목과 정확히 일치해야만 검색해서 가져올 수 있는데
 // find({ title: {$regex : 요청.query.val} }) 이런식으로 $Regex 정규식을 사용하면  요청한 제목이 포함된 게시글을 가져올 수 있다.
 
+// 검색을 좀 더 빠르게 하고 싶으면 index를 사용하면 됨
+// Index 단점은 document 추가/수정/삭제시 index도 반영해야 한다.
+//$text text index를 사용하겠다는 뜻
 app.get('/search', async(요청,응답) => {
   console.log(요청.query.val)
- let result = await db.collection('post').find({ title: {$regex : 요청.query.val} }).toArray()
+ let result = await db.collection('post').find({$text : { $search : 요청.query.val}}).toArray()
   응답.render('search.ejs', { posts : result })
 })
+
