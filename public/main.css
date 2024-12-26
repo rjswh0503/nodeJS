@@ -52,16 +52,23 @@ div {
   margin-top: 10px;
 }
 
-
-
 .write-1 {
   display: flex;
   justify-content: flex-end;
-  
 }
-
-
 
 .delete {
   cursor: pointer;
+}
+
+.search {
+  margin-left: 20px;
+  padding: 5px;
+}
+.search-send {
+  padding: 6px 10px;
+  background: lightgray;
+  border: none;
+  border-radius: 5px;
+  vertical-align: middle;
 }

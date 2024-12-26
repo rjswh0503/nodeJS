@@ -12,10 +12,14 @@
     <button class="search-send">검색</button> 
     <script>
       document.querySelector('.search-send').addEventListener('click', function(){
-        let input = document.querySelector('.search').value
-        location.href='/search?val=' + input
+        let 입력한거 = document.querySelector('.search').value
+        location.href='/search?val=' + 입력한거
       })
     </script>
+
+    <h4>검색결과</h4>
+
+
     <div class="white-bg">
       <% for(let i = 0; i < posts.length; i++){ %>
 
@@ -29,27 +33,5 @@
       </div>
       <% } %>
     </div>
-    
-
-    <script>
-
-      try{
-        for(let i = 0; i <= document.querySelectorAll('.delete').length; i++){
-        document.querySelectorAll('.delete')[i].addEventListener('click', function(e){
-        
-        fetch('/delete?docid=' + e.target.dataset.id, {
-          method : 'DELETE',
-        })
-        alert('게시글 삭제 완료!');
-        e.target.parentElement.parentElement.style.display = 'none'
-      })
-      }
-      }catch(e){
-        console.log(e);
-      }
-      
-      
-      
-    </script>
   </body>
 </html>

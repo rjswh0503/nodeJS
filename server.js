@@ -467,4 +467,11 @@ function idPasswordCheck (요청,응답,next) {
 
  
 
-// 이미지 업로드 기능 만들기 1 (AWS S3)
+
+// 2024-12-26 검색기능 만들기
+
+app.get('/search', async(요청,응답) => {
+  console.log(요청.query.val)
+ let result = await db.collection('post').find({ title: 요청.query.val }).toArray()
+  응답.render('search.ejs', { posts : result })
+})
