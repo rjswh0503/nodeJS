@@ -469,9 +469,12 @@ function idPasswordCheck (요청,응답,next) {
 
 
 // 2024-12-26 검색기능 만들기
+//$regex : 요청.query.val = 정규식
+// find({title : "요청.query.val"})을 입력하고 게시글을 검색할 때 title : 이  요청한 제목과 정확히 일치해야만 검색해서 가져올 수 있는데
+// find({ title: {$regex : 요청.query.val} }) 이런식으로 $Regex 정규식을 사용하면  요청한 제목이 포함된 게시글을 가져올 수 있다.
 
 app.get('/search', async(요청,응답) => {
   console.log(요청.query.val)
- let result = await db.collection('post').find({ title: 요청.query.val }).toArray()
+ let result = await db.collection('post').find({ title: {$regex : 요청.query.val} }).toArray()
   응답.render('search.ejs', { posts : result })
 })
