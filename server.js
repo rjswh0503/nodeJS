@@ -141,8 +141,9 @@ app.get("/list", async (요청, 응답) => {
   //result 변수에  await db.collection('post').find().toArray() 저장
   // MongoDB에 있는 데이터들을 불러올 때  post 라는 collection 뒤에 .find().toArray()를 사용하여 불러올 수 있다.
   // await
+  const currentUser = 요청.user._id.toString()
   let result1 = await db.collection("post").find().toArray();
-  응답.render("list.ejs", { posts: result1 });
+  응답.render("list.ejs", { posts: result1, currentUser });
 });
 
 // html 파일에 서버 데이터를 넣는 방법은 template engine을 사용하면 된다.
@@ -268,20 +269,17 @@ app.get("/detail/:id", async (요청, 응답) => {
 // 2024.12.12  수정기능 만들기
 
 app.get('/post/:id', async(요청,응답) => {
-  console.log(요청.user)
+  
   try{
-
+    const currentUser = 요청.user._id
     let result = await db.collection('post').findOne({
       _id: new ObjectId(요청.params.id),
-      user: 요청.user._id,
     })
-    if(요청.user._id !== 요청.user._id){
+    if(currentUser.toString() !== result.user.toString()){
       응답.send('작성자가 아니므로 수정 불가능...')
     }else {
-      응답.render('edit.ejs', {edit : result})
+      응답.render('edit.ejs', {edit : result, currentUser})
     }
-    
-
   } catch(e){
     console.log(e)
   }
@@ -300,11 +298,13 @@ app.get('/post/:id', async(요청,응답) => {
 // 사용예제 : action="/edit?_method=PUT" method="POST"
 app.put('/edit', async(요청,응답) => {
   try{
-  
     if(요청.body.title == ''|| 요청.body.contents == ''){
       응답.send('제목이나 내용에 빈칸이 있으면 안됩니다.')
     }else{
-      await db.collection('post').updateOne({_id: new ObjectId(요청.body.id)}, {$set : {title : 요청.body.title, contents : 요청.body.contents, }})
+      await db.collection('post').updateOne({_id: new ObjectId(요청.body.id),
+        user: 요청.user._id,
+      },
+       {$set : {title : 요청.body.title, contents : 요청.body.contents, }})
     응답.redirect('/list');
     }
   }catch(e) {
