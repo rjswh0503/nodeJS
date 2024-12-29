@@ -220,8 +220,9 @@ app.get("/write", (요청, 응답) => {
 });
 
 app.post("/add", upload.single('img'), async (요청, 응답) => {
-  console.log(요청.file)
-    // 에러상황을 처리하고 싶을 땐 try catch를 사용하면 된다.
+   
+  // 에러상황을 처리하고 싶을 땐 try catch를 사용하면 된다.
+  
   try {
     if (요청.body.title == "") {
       응답.send("제목 입력해라~");
@@ -231,13 +232,18 @@ app.post("/add", upload.single('img'), async (요청, 응답) => {
       // 데이터베이스에 요청한 값을 저장하기 위해서는 insertOne을 사용하면 된다.
       await db
         .collection("post")
-        .insertOne({ title: 요청.body.title, contents: 요청.body.content });
+        .insertOne({ title: 요청.body.title, 
+          contents: 요청.body.content, 
+          img : 요청.file ? 요청.file.location : '', 
+          user : 요청.user._id, 
+          username : 요청.user.username});
       응답.redirect("/list");
     }
   } catch (e) {
     console.log(e);
     응답.status(500).send("서버에러");
   }
+  
 });
 
 // 2024-12-11
@@ -262,8 +268,24 @@ app.get("/detail/:id", async (요청, 응답) => {
 // 2024.12.12  수정기능 만들기
 
 app.get('/post/:id', async(요청,응답) => {
-  let result = await db.collection('post').findOne({_id: new ObjectId(요청.params.id)})
-  응답.render('edit.ejs', {edit : result})
+  console.log(요청.user)
+  try{
+
+    let result = await db.collection('post').findOne({
+      _id: new ObjectId(요청.params.id),
+      user: 요청.user._id,
+    })
+    if(요청.user._id !== 요청.user._id){
+      응답.send('작성자가 아니므로 수정 불가능...')
+    }else {
+      응답.render('edit.ejs', {edit : result})
+    }
+    
+
+  } catch(e){
+    console.log(e)
+  }
+  
 })
 
 // 수정 api
@@ -296,7 +318,10 @@ app.put('/edit', async(요청,응답) => {
 // 2024-12-13 삭제기능 
 
 app.delete('/delete', async (요청,응답) => {
-  await db.collection('post').deleteOne({_id: new ObjectId(요청.query.docid)})
+  await db.collection('post').deleteOne({
+    _id: new ObjectId(요청.query.docid),
+    user: 요청.user._id
+  })
   응답.send('삭제완료!');
 })
 
