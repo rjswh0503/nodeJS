@@ -117,11 +117,7 @@ app.get("/shop", (요청, 응답) => {
 
 //유저에게 html파일을 보내주려면
 app.get("/", (요청, 응답) => {
-  if(!요청.user){
-    응답.send('로그인 부터 하세요~')
-  }else if(요청.user){
-    응답.sendFile(__dirname + "/index.html");
-  }
+  응답.render('main.ejs')
   // __dirname은 절대경로 server.js가 담긴 폴더를 의미하는 것
   // /index.html 파일과 server.js 파일이 같은 폴더에 있기 때문에 index.html파일을 보내줄 수 있다.
 });
@@ -141,7 +137,8 @@ app.get("/list", async (요청, 응답) => {
   //result 변수에  await db.collection('post').find().toArray() 저장
   // MongoDB에 있는 데이터들을 불러올 때  post 라는 collection 뒤에 .find().toArray()를 사용하여 불러올 수 있다.
   // await
-  const currentUser = 요청.user._id.toString()
+  const currentUser = 요청.user.username
+  
   let result1 = await db.collection("post").find().toArray();
   응답.render("list.ejs", { posts: result1, currentUser });
 });
@@ -449,7 +446,7 @@ app.post('/register', idPasswordCheck, async (요청,응답) => {
       응답.send('비밀번호는 6글자 이상입니다.')
     }else {
       await db.collection('user').insertOne({username : 요청.body.username, password : 해싱})
-      응답.redirect('/list')
+      응답.redirect('/login')
       
     }
      
@@ -458,6 +455,17 @@ app.post('/register', idPasswordCheck, async (요청,응답) => {
   }
   
 })
+
+//로그아웃 기능 만들기
+app.get('/logout', (req, res) => {
+  req.logout((err) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).send('로그아웃 오류');
+    }
+    res.redirect('/'); // 로그아웃 후 로그인 페이지로 리다이렉트
+  });
+});
 
 
 // 2024-12-18 환경변수 / 미들웨어
