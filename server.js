@@ -257,7 +257,7 @@ app.post("/add", upload.single('img'), async (요청, 응답) => {
 app.get("/detail/:id", async (요청, 응답) => {
   let result = await db
     .collection("post")
-    .findOne({ _id: new ObjectId(요청.params.id) });
+    .findOne({ _id: new ObjectId(요청.params.id)});
   console.log(요청.params.id);
   let result2 = await db.collection('comment').find({ parentId : new ObjectId(요청.params.id)}).toArray()
   응답.render("detail.ejs", { detail: result, detail2 : result2 });
