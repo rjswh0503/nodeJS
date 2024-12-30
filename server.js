@@ -527,3 +527,8 @@ app.get('/search', async(요청,응답) => {
   응답.render('search.ejs', { posts : result })
 })
 
+
+app.get('/mypage', (요청,응답) => {
+  let currentUser = 요청.user.username
+  응답.render('myPage.ejs', { currentUser })
+})

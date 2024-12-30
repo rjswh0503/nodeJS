@@ -6,8 +6,13 @@
     <title>MyPage</title>
 </head>
 <body>
-    <div style="display:flex; justify-self: end;">
-        <p>님 안녕하세요.!! 환영합니다.!!!</p>
+    <div>
+        <p style="text-align: center;"><%= currentUser %>님 안녕하세요.!! 환영합니다.!!!</p>
+        <div style="display: flex; gap: 30px; justify-content: center; cursor: pointer; margin-top: 30px;">
+            <p>회원정보 수정</p>
+            <p>회원탈퇴 하기</p>
+        </div>
+        <a style="text-decoration: none; display: flex; justify-content: center; margin-top: 30px;"  href="/list">list로 돌아가기</a>
     </div>
     
 </body>
