@@ -3,35 +3,45 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="/main.css" />
-    <title>Document</title>
+    <link rel="stylesheet" href="/detail.css" />
+    <title>게시글 상세</title>
   </head>
 
   <body>
+    <div>
+      <a href="/list">돌아가기</a>
+    </div>
     <div class="detail-bg">
-      <h4><%= detail.title %></h4>
-      <p><%= detail.contents %></p>
-      <img src="<%= detail.img %>" >
+      <h4 class="detail-title"><%= detail.title %></h4>
+      <p class="detail-content"><%= detail.contents %></p>
+      <img class="detail-image" src= "<%= detail.img %>" alt="게시글 이미지">
     </div> 
 
-    <%for(let i = 0; i < detail2.length; i++){ %>
-      <div class="coment-content">
-        <p style="font-size: 25px; border: 1px solid black; width: 750px; background-color: black;color: white;">
+    <!-- 댓글 목록 -->
+    <% for (let i = 0; i < detail2.length; i++) { %>
+      <div class="comment-content">
+        <p class="comment-writer">
           <strong><%= detail2[i].writer %></strong>
-          
         </p>
-        <p style="font-size: 20px;">
+        <p class="comment-text">
           <%= detail2[i].content %>
         </p>
       </div>
-     <% } %>
-    <form action="/comment" method="post">
+    <% } %>
+
+    <!-- 댓글 작성 폼 -->
+    <form class="comment-form" action="/comment" method="post">
       <div class="comment-container">
-        <p style="margin: 30px 0 0 30px">댓글쓰기</p>
-        <input name="parentId" value="<%= detail._id %>" style="display: none;" >
-        <input name="content" type="text" style="width: 600px; height: 70px; margin-left: 30px; background-color: #f3f3f5; font-size: 20px; margin-top: 30px; border-radius: 1px; border: none;" placeholder="덧글을 입력하세요." ><button type="submit" class="comment-btn">댓글작성</button>
+        <p class="comment-label">댓글쓰기</p>
+        <input name="parentId" value="<%= detail._id %>" type="hidden">
+        <input 
+          name="content" 
+          type="text" 
+          class="comment-input" 
+          placeholder="덧글을 입력하세요."
+        >
+        <button type="submit" class="comment-btn">댓글작성</button>
       </div>
     </form>
-    
   </body>
 </html>
