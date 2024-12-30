@@ -12,6 +12,26 @@
       <h4><%= detail.title %></h4>
       <p><%= detail.contents %></p>
       <img src="<%= detail.img %>" >
-    </div>  
+    </div> 
+
+    <%for(let i = 0; i < detail2.length; i++){ %>
+      <div class="coment-content">
+        <p style="font-size: 25px; border: 1px solid black; width: 750px; background-color: black;color: white;">
+          <strong><%= detail2[i].writer %></strong>
+          
+        </p>
+        <p style="font-size: 20px;">
+          <%= detail2[i].content %>
+        </p>
+      </div>
+     <% } %>
+    <form action="/comment" method="post">
+      <div class="comment-container">
+        <p style="margin: 30px 0 0 30px">댓글쓰기</p>
+        <input name="parentId" value="<%= detail._id %>" style="display: none;" >
+        <input name="content" type="text" style="width: 600px; height: 70px; margin-left: 30px; background-color: #f3f3f5; font-size: 20px; margin-top: 30px; border-radius: 1px; border: none;" placeholder="덧글을 입력하세요." ><button type="submit" class="comment-btn">댓글작성</button>
+      </div>
+    </form>
+    
   </body>
 </html>

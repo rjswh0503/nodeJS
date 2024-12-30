@@ -259,7 +259,8 @@ app.get("/detail/:id", async (요청, 응답) => {
     .collection("post")
     .findOne({ _id: new ObjectId(요청.params.id) });
   console.log(요청.params.id);
-  응답.render("detail.ejs", { detail: result });
+  let result2 = await db.collection('comment').find().toArray()
+  응답.render("detail.ejs", { detail: result, detail2 : result2 });
 });
 
 
@@ -531,4 +532,20 @@ app.get('/search', async(요청,응답) => {
 app.get('/mypage', (요청,응답) => {
   let currentUser = 요청.user.username
   응답.render('myPage.ejs', { currentUser })
+})
+
+
+
+// 덧글 기능
+
+app.post('/comment', async (요청,응답) => {
+  await db.collection('comment').insertOne({
+    content : 요청.body.content,
+    writerId : new ObjectId(요청.user._id),
+    writer : 요청.user.username,
+    parentId :new ObjectId(요청.body.parentId),
+  })
+
+  응답.redirect('back')
+
 })
