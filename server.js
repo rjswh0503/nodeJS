@@ -615,3 +615,4 @@ app.get('/myPage/boardList/:id', async (요청,응답) => {
   console.log(result)
   응답.render('myBoard.ejs',  { result : result })
 })
+
