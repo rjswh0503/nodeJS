@@ -594,3 +594,24 @@ app.get('/chat/detail/:id', async(요청,응답) => {
   }
 })
 
+
+io.on('connection', (socket) =>{
+  
+  socket.on('ask-join', (data)=> {
+   console.log(socket.request.session) 
+    socket.join(data)
+  })
+
+
+
+  
+})
+
+
+// 내가 쓴 게시글 가져오기
+app.get('/myPage/boardList/:id', async (요청,응답) => {
+  
+  let result = await db.collection('post').find({username : 요청.params.id  }).toArray()
+  console.log(result)
+  응답.render('myBoard.ejs',  { result : result })
+})

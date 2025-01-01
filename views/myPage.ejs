@@ -9,8 +9,9 @@
     <div>
         <p style="text-align: center;"><%= currentUser %>님 안녕하세요.!! 환영합니다.!!!</p>
         <div style="display: flex; gap: 30px; justify-content: center; cursor: pointer; margin-top: 30px;">
-            <p>회원정보 수정</p>
-            <p>회원탈퇴 하기</p>
+            <a style="text-decoration: none; color: black;" href="/"><p>회원정보 수정</p></a>
+            <a style="text-decoration: none; color: black;"  href="/"><p>회원탈퇴 하기</p></a>
+            <a style="text-decoration: none; color: black;" href="/myPage/boardList/<%= currentUser %>"><p>내가 쓴 게시글 보기</p></a>
         </div>
         <a style="text-decoration: none; display: flex; justify-content: center; margin-top: 30px;"  href="/list">list로 돌아가기</a>
     </div>

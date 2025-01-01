@@ -25,7 +25,17 @@
 
     <script src="https://cdn.jsdelivr.net/npm/socket.io@4.7.2/client-dist/socket.io.min.js"></script>
     <script>
-      const socket = io() 
+
+
+
+      const socket = io()
+      socket.emit('ask-join', '<%= result._id %>')
+      
+      document.querySelector('.chat-button').addEventListener('click', function(){
+        let 작성 = document.querySelector('.chat-input').value
+        socket.emit('message-send', {room : '<%= result._id %>', msg: 작성 })
+      })
+      
     </script>
 
   </body>
