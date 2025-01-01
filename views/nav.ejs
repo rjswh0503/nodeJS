@@ -8,7 +8,9 @@
 <body>
     <div class="nav">
         <%if(currentUser){ %>
-        <p><%= currentUser %>님 환영합니다.</p>
+        <p><%= currentUser %>님 환영합니다.
+        <span><a href="/chat/list">채팅목록</a></span>
+        </p>
         <a href="/logout" style="text-decoration: none;  margin-top: 50px; margin-right: 20px; color: black;">로그아웃</a>
         <a href="/write" style="text-decoration: none; margin-top: 50px; margin-right: 20px; color: black">글작성</a>
         <a href="/mypage" style="text-decoration: none; margin-top: 50px; color: black">마이페이지</a>

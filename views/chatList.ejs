@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/main.css" />
+    <title>Document</title>
+  </head>
+  <body class="grey-bg">
+    <div class="white-bg">
+        
+        <% for(let i = 0; i < result.length; i++){ %>
+        
+            <div class="list-box">
+            <h4>
+               <a style="text-decoration: none; color: black;" href="/chat/detail/<%= result[i]._id %>">나의채팅방 <%= i %></a> 
+                
+            </h4>
+            <p>내용</p>
+                
+            </div>
+        <% } %>
+    </div>
+  </body>
+</html>
