@@ -126,9 +126,12 @@ app.get("/shop", (요청, 응답) => {
 
 //유저에게 html파일을 보내주려면
 app.get("/", (요청, 응답) => {
+  
   let currentUser = 요청.user.username
   console.log('로그인한 유저 : ' + currentUser + ' 님')
   응답.render('main.ejs', {currentUser : currentUser})
+ 
+  
   // __dirname은 절대경로 server.js가 담긴 폴더를 의미하는 것
   // /index.html 파일과 server.js 파일이 같은 폴더에 있기 때문에 index.html파일을 보내줄 수 있다.
 });
@@ -400,7 +403,7 @@ passport.serializeUser((user, done) => {
 passport.deserializeUser(async (user, done) => {
   
  let result = await db.collection('user').findOne({_id: new ObjectId(user.id)})
- delete result.password
+ // delete result.password
   process.nextTick(() => {
     done(null, result)
   })
@@ -613,10 +616,36 @@ io.on('connection', (socket) =>{
 // 내가 쓴 게시글 가져오기
 app.get('/myPage/boardList/:id', async (요청,응답) => {
   
-  let result = await db.collection('post').find({username : 요청.params.id  }).toArray()
+  let result = await db.collection('post').find({username : 요청.params.id}).toArray()
   console.log(result)
   응답.render('myBoard.ejs',  { result : result })
 })
 
 // 회원정보 수정하기
 // 비밀번호를 본인확인으로 사용하여 본인확인 성공시 회원정보 수정 가능하게 기능 개발
+app.get('/myPage/edit/:id', async (요청,응답) => {
+  let currentUser = 요청.user.username
+  let result = await db.collection('user').findOne({username: 요청.params.id})
+  응답.render('editUser.ejs', { result : result , currentUser})
+})
+
+app.put('/editUser', async(요청,응답) => {
+  try{
+    const currentPassword = 요청.body.password
+    const newPassword = 요청.body.password
+    const user = await db.collection('user').find({_id : new ObjectId(요청.body.id)})
+    
+    const MatchPw = await bcrypt.compare(currentPassword, user.password)
+
+    if(!MatchPw){
+      return 응답.status(204).json({message : '비밀번호가 다릅니다.'})
+    }
+
+    user.password = await bcrypt.hash(newPassword, 10)
+  } catch(e){
+    console.log(e)
+  }
+  
+
+
+})

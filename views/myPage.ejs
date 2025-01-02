@@ -9,7 +9,7 @@
     <div>
         <p style="text-align: center; font-size: 40px;"><%= currentUser %>님의 <span style="font-weight: bold;">MyPage</span></p>
         <div style="display: flex; gap: 30px; justify-content: center; cursor: pointer; margin-top: 30px;">
-            <a style="text-decoration: none; color: black;" href="/"><p>회원정보 수정</p></a>
+            <a style="text-decoration: none; color: black;" href="/myPage/edit/<%= currentUser %>"><p>회원정보 수정</p></a>
             <a style="text-decoration: none; color: black;"  href="/"><p>회원탈퇴 하기</p></a>
             <a style="text-decoration: none; color: black;" href="/myPage/boardList/<%= currentUser %>"><p>내가 쓴 게시글 보기</p></a>
         </div>

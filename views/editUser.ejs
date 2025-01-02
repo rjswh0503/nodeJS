@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/main.css">
+    <title>회원정보 수정</title>
+</head>
+    <body class="grey-bg">
+            <form class="form-box" action="/editUser?_method=PUT" method="POST">
+                <h4>회원정보 수정</h4>
+                <input type="text" name="id" value="<%= result._id %>" style="display: none;">
+                <input type="password" name="currentPassword" value="<%= result.currentPassword %>">
+                <input type="password" name="newPassword" value="<%= result.newPassword %>">
+                <button type="submit">전송</button>
+            </form> 
+</body>
+</html>
+
+
