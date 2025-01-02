@@ -126,7 +126,9 @@ app.get("/shop", (요청, 응답) => {
 
 //유저에게 html파일을 보내주려면
 app.get("/", (요청, 응답) => {
-  응답.render('main.ejs')
+  let currentUser = 요청.user.username
+  console.log('로그인한 유저 : ' + currentUser + ' 님')
+  응답.render('main.ejs', {currentUser : currentUser})
   // __dirname은 절대경로 server.js가 담긴 폴더를 의미하는 것
   // /index.html 파일과 server.js 파일이 같은 폴더에 있기 때문에 index.html파일을 보내줄 수 있다.
 });
@@ -616,3 +618,5 @@ app.get('/myPage/boardList/:id', async (요청,응답) => {
   응답.render('myBoard.ejs',  { result : result })
 })
 
+// 회원정보 수정하기
+// 비밀번호를 본인확인으로 사용하여 본인확인 성공시 회원정보 수정 가능하게 기능 개발
